@@ -1,5 +1,7 @@
 from __future__ import annotations
 import os
+from types import TracebackType
+from typing import Optional, Type
 
 
 class CleanUpFile:
@@ -11,10 +13,13 @@ class CleanUpFile:
         self.file = open(self.filename, "w")
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback) -> bool:
+    def __exit__(
+            self,
+            exc_type: Optional[Type[BaseException]],
+            exc_val: Optional[BaseException],
+            exc_tb: Optional[TracebackType]
+    ) -> None:
         if self.file:
             self.file.close()
-        file_path = os.path.abspath(self.filename)
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        return False
+            if os.path.exists(self.filename):
+                os.remove(self.filename)
